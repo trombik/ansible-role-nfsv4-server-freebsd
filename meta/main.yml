@@ -1,14 +1,15 @@
 ---
 galaxy_info:
   author: Tomoyuki Sakurai
-  description: Configures something
-  company: Reallyenglish
+  description: Manages NFSv4 daemons
+  company: N/A
   license: BSD
   min_ansible_version: 2.0
   platforms:
   - name: FreeBSD
     versions:
     - 10.3
+    - 11.1
 #  - name: OpenBSD
 #    versions:
 #    - 6.0
@@ -22,6 +23,7 @@ galaxy_info:
 #    - 7
 
   galaxy_tags:
-    - system
+    - nfs
+    - nfsv4
 #dependencies:
 #  - foo.role

@@ -1,6 +1,29 @@
 ---
 
-- name: Restart nfsv4-server-freebsd
+- name: Restart mountd
   service:
-    name: nfsv4-server-freebsd
+    name: mountd
+    state: restarted
+
+- name: Reload mountd
+  service:
+    name: mountd
+    state: reloaded
+
+- name: Restart nfsd
+  service:
+    name: nfsd
+    state: restarted
+
+- name: Restart rpcbind
+  service:
+    name: rpcbind
+    state: restarted
+  notify:
+    - Restart mountd
+    - Restart nfsd
+
+- name: Restart nfsuserd
+  service:
+    name: nfsuserd
     state: restarted

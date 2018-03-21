@@ -1,37 +1,84 @@
 ---
-# tasks file for ansible-role-nfsv4-server-freebsd
 
-- include_vars: "{{ ansible_os_family }}.yml"
-
-- include: "install-{{ ansible_os_family }}.yml"
-
-- name: Create log directory
-  file:
-    path: "{{ nfsv4-server-freebsd_log_dir }}"
-    mode: 0755
-    owner: "{{ nfsv4-server-freebsd_user }}"
-    group: "{{ nfsv4-server-freebsd_group }}"
-    state: directory
-  notify: Restart nfsv4-server-freebsd
-
-- name: Create db directory
-  file:
-    path: "{{ nfsv4-server-freebsd_db_dir }}"
-    mode: 0755
-    owner: "{{ nfsv4-server-freebsd_user }}"
-    group: "{{ nfsv4-server-freebsd_group }}"
-    state: directory
-  notify: Restart nfsv4-server-freebsd
-
-- name: Create nfsv4-server-freebsd.conf
+- name: Create /etc/exports
   template:
-    src: nfsv4-server-freebsd.conf.j2
-    dest: "{{ nfsv4-server-freebsd_conf_file }}"
-    validate: echo %s
-  notify: Restart nfsv4-server-freebsd
+    src: exports.j2
+    dest: "{{ nfsv4_server_freebsd_exports_file }}"
+    #validate: echo %s
+  notify: Reload mountd
 
-- name: Start nfsv4-server-freebsd
+- name: Set nfs_server_enable in rc.conf(5)
+  # XXX this is a meta service without corresponding rc.d script
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: '^nfs_server_enable='
+    line: 'nfs_server_enable="YES"'
+    validate: sh -n %s
+
+- name: Enable nfsv4_server_enable in rc.conf(5)
+  # XXX this is a meta service without corresponding rc.d script
+  lineinfile:
+    dest: /etc/rc.conf
+    regexp: '^nfsv4_server_enable='
+    line: 'nfsv4_server_enable="YES"'
+    validate: sh -n %s
+
+- name: Create /etc/rc.conf.d/mountd
+  template:
+    src: mountd.rcd.j2
+    dest: /etc/rc.conf.d/mountd
+    validate: sh -n %s
+  notify:
+    - Restart mountd
+
+- name: Create /etc/rc.conf.d/nfsd
+  template:
+    src: nfsd.rcd.j2
+    dest: /etc/rc.conf.d/nfsd
+    validate: sh -n %s
+  notify:
+    - Restart nfsd
+
+- name: Create /etc/rc.conf.d/rpcbind
+  template:
+    dest: /etc/rc.conf.d/rpcbind
+    src: rpcbind.rcd.j2
+    validate: sh -n %s
+  notify:
+    - Restart rpcbind
+
+- name: Enable mountd(8), rpcbind(8), and nfsd(8)
+  # XXX this is not necessary to start them but ansible cannot restart in
+  # the handler without enabling the services
   service:
-    name: "{{ nfsv4-server-freebsd_service }}"
-    enabled: true
+    name: "{{ item }}"
+    enabled: yes
+  with_items:
+    - mountd
+    - rpcbind
+
+- name: Create /etc/rc.conf.d/nfsuserd
+  template:
+    src: nfsuserd.rcd.j2
+    dest: /etc/rc.conf.d/nfsuserd
+    validate: sh -n %s
+  notify:
+    - Restart nfsuserd
+
+- name: Start nfsuserd if enabled
+  service:
+    name: nfsuserd
+    state: "{% if nfsv4_server_freebsd_nfsuserd_enable %}started{% else %}stopped{% endif %}"
+    enabled: "{{ nfsv4_server_freebsd_nfsuserd_enable }}"
+
+- name: Start nfsd
+  # XXX no need to set nfsd_enable="YES" in rc.conf(5)
+  service:
+    name: nfsd
+    state: started
+
+- name: Start mountd
+  # XXX no need to set mountd_enable="YES" in rc.conf(5)
+  service:
+    name: mountd
     state: started

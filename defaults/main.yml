@@ -1,8 +1,7 @@
-nfsv4-server-freebsd_user: nfsv4-server-freebsd
-nfsv4-server-freebsd_group: nfsv4-server-freebsd
-nfsv4-server-freebsd_log_dir: /var/log/nfsv4-server-freebsd
-nfsv4-server-freebsd_db_dir: "{{ __nfsv4-server-freebsd_db_dir }}"
-nfsv4-server-freebsd_service: nfsv4-server-freebsd
-nfsv4-server-freebsd_conf_dir: "{{ __nfsv4-server-freebsd_conf_dir }}"
-nfsv4-server-freebsd_conf_file: "{{ __nfsv4-server-freebsd_conf_dir }}/nfsv4-server-freebsd.conf"
-nfsv4-server-freebsd_flags: ""
+nfsv4_server_freebsd_exports_file: /etc/exports
+nfsv4_server_freebsd_exports: ""
+nfsv4_server_freebsd_nfsuserd_enable: yes
+nfsv4_server_freebsd_nfsuserd_flags: ""
+nfsv4_server_freebsd_mountd_flags: ""
+nfsv4_server_freebsd_rpcbind_flags: ""
+nfsv4_server_freebsd_nfsd_flags: ""

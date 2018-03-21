@@ -37,7 +37,7 @@ task :clean_role do
 end
 
 desc "prepare the test environment"
-task prepare: [:prepare_role, :prepare_roles, :vagrant_up] do
+task prepare: [:prepare_role, :vagrant_up] do
 end
 
 desc "import required roles"

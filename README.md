@@ -1,6 +1,6 @@
 # ansible-role-nfsv4-server-freebsd
 
-A brief description of the role goes here.
+Manages NFSv4 server daemons on FreeBSD.
 
 # Requirements
 
@@ -8,9 +8,15 @@ None
 
 # Role Variables
 
-| variable | description | default |
+| Variable | Description | Default |
 |----------|-------------|---------|
-
+| `nfsv4_server_freebsd_exports_file` | Path to `exports(5)` | `/etc/exports` |
+| `nfsv4_server_freebsd_exports` | Content of `exports(5)` | `""` |
+| `nfsv4_server_freebsd_nfsuserd_enable` | Enable `nfsuserd(8)` when `yes` | `yes` |
+| `nfsv4_server_freebsd_nfsuserd_flags` | Arguments to `nfsuserd(8)` | `""` |
+| `nfsv4_server_freebsd_mountd_flags` | Arguments to `mountd(8)` | `""` |
+| `nfsv4_server_freebsd_rpcbind_flags` | Arguments to `rpcbind(8)` | `""` |
+| `nfsv4_server_freebsd_nfsd_flags` | Arguments to `nfsd(8)` | `""` |
 
 # Dependencies
 
@@ -19,6 +25,17 @@ None
 # Example Playbook
 
 ```yaml
+- hosts: localhost
+  roles:
+    - ansible-role-nfsv4-server-freebsd
+  vars:
+    nfsv4_server_freebsd_mountd_flags: -r -S -l
+    nfsv4_server_freebsd_rpcbind_flags: "-h {{ ansible_default_ipv4.address }}"
+    nfsv4_server_freebsd_nfsd_flags: "-u -t -h {{ ansible_default_ipv4.address }} -n 6"
+    nfsv4_server_freebsd_nfsuserd_flags: -domain example.org
+    nfsv4_server_freebsd_exports: |
+      V4: /usr/local
+      /usr/local -sec=sys -ro -network {{ ansible_em0.ipv4[0].network }} -mask {{ ansible_em0.ipv4[0].netmask }}
 ```
 
 # License

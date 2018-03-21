@@ -1,6 +1,0 @@
----
-
-- name: Install nfsv4-server-freebsd
-  pkgng:
-    name: nfsv4-server-freebsd
-    state: present
