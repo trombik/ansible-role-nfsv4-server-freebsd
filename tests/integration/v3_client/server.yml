@@ -1,0 +1,20 @@
+---
+- hosts: server
+  become: yes
+  become_method: sudo
+  environment:
+    http_proxy: "{{ http_proxy | default() }}"
+    https_proxy: "{{ https_proxy | default() }}"
+    no_proxy: "{{ no_proxy | default() }}"
+
+  pre_tasks:
+  roles:
+    - ansible-role-nfsv4-server-freebsd
+  vars:
+    nfsv4_server_freebsd_mountd_flags: -r -S -l
+    nfsv4_server_freebsd_rpcbind_flags: "-h {{ ansible_em1.ipv4[0].address }}"
+    nfsv4_server_freebsd_nfsd_flags: "-u -t -h {{ ansible_em1.ipv4[0].address }} -n 6"
+    nfsv4_server_freebsd_nfsuserd_flags: -domain virtualbox.trombik.org
+    nfsv4_server_freebsd_exports: |
+      V4: /usr/local
+      /usr/local -sec=sys -ro -network {{ ansible_em1.ipv4[0].network }} -mask {{ ansible_em1.ipv4[0].netmask }}
