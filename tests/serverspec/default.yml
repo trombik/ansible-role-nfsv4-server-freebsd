@@ -1,0 +1,5 @@
+- hosts: localhost
+  roles:
+    - ansible-role-nfsv4-server-freebsd
+  vars:
+    nfsv4-server-freebsd_config: ""

@@ -1,0 +1,8 @@
+nfsv4-server-freebsd_user: nfsv4-server-freebsd
+nfsv4-server-freebsd_group: nfsv4-server-freebsd
+nfsv4-server-freebsd_log_dir: /var/log/nfsv4-server-freebsd
+nfsv4-server-freebsd_db_dir: "{{ __nfsv4-server-freebsd_db_dir }}"
+nfsv4-server-freebsd_service: nfsv4-server-freebsd
+nfsv4-server-freebsd_conf_dir: "{{ __nfsv4-server-freebsd_conf_dir }}"
+nfsv4-server-freebsd_conf_file: "{{ __nfsv4-server-freebsd_conf_dir }}/nfsv4-server-freebsd.conf"
+nfsv4-server-freebsd_flags: ""

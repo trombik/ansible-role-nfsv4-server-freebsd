@@ -1,0 +1,6 @@
+---
+
+- name: Restart nfsv4-server-freebsd
+  service:
+    name: nfsv4-server-freebsd
+    state: restarted
